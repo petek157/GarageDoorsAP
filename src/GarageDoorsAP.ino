@@ -10,7 +10,7 @@ bool leftOpen = false;
 
 void setup() {
 
-Particle.function("leftDoorToogle", leftDoorToogle);
+  Particle.function("tleftdoor", tleftdoor);
 
   pinMode(leftTrigger, OUTPUT);
   digitalWrite(leftTrigger, LOW);
@@ -24,7 +24,7 @@ void loop() {
 
 }
 
-int leftDoorToogle(String command) {
+int tleftdoor(String command) {
   // look for the matching argument "coffee" <-- max of 64 characters long
   if(command == "1") {
     
