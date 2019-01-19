@@ -15,11 +15,13 @@ bool leftOpen = false;
 const int rightTrigger = A1;
 bool rightOpen = false;
 
-WiFi.setCredentials("GLF", "abcdef1234");
-WiFi.setCredentials("IHV", "abcdef1234");
-WiFi.setCredentials("PKShop", "abcdef1234");
+
 
 void setup() {
+
+  WiFi.setCredentials("GLF", "abcdef1234");
+  WiFi.setCredentials("IHV", "abcdef1234");
+  WiFi.setCredentials("PKShop", "abcdef1234");
 
   //Wash
   Particle.variable("leftopen", leftOpen);
