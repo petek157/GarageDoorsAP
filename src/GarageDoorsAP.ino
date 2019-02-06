@@ -46,31 +46,37 @@ void setup() {
 // loop() runs over and over again, as quickly as it can execute.
 void loop() {
   // The core of your code will likely live here.
-  if (digitalRead(leftCheck == HIGH)) {
+  if (digitalRead(leftCheck) == HIGH) {
     leftOpen = true;
+  } else {
+    leftOpen = false;
   }
 
-  if (digitalRead(rightCheck == HIGH)) {
+  if (digitalRead(rightCheck) == HIGH) {
     rightOpen = true;
+  } else {
+    rightOpen = false;
   }
 
 }
 
 int tleftdoor(String command) {
-  // look for the matching argument "coffee" <-- max of 64 characters long
   if(command == "1") {
     
-    if (leftOpen == true) {
-      digitalWrite(leftTrigger, HIGH);
-      delay(tDelay);
-      digitalWrite(leftTrigger, LOW);
-      leftOpen = false;
-    } else if (leftOpen == false) {
-      digitalWrite(leftTrigger, HIGH);
-      delay(tDelay);
-      digitalWrite(leftTrigger, LOW);
-      leftOpen = true;
-    }
+    digitalWrite(leftTrigger, HIGH);
+    delay(tDelay);
+    digitalWrite(leftTrigger, LOW);
+    // if (leftOpen == true) {
+    //   digitalWrite(leftTrigger, HIGH);
+    //   delay(tDelay);
+    //   digitalWrite(leftTrigger, LOW);
+    //   leftOpen = false;
+    // } else if (leftOpen == false) {
+    //   digitalWrite(leftTrigger, HIGH);
+    //   delay(tDelay);
+    //   digitalWrite(leftTrigger, LOW);
+    //   leftOpen = true;
+    // }
     
 
     return 1;
@@ -78,20 +84,22 @@ int tleftdoor(String command) {
 }
 
 int trightdoor(String command) {
-  // look for the matching argument "coffee" <-- max of 64 characters long
   if(command == "1") {
     
-    if (rightOpen == true) {
-      digitalWrite(rightTrigger, HIGH);
-      delay(tDelay);
-      digitalWrite(rightTrigger, LOW);
-      rightOpen = false;
-    } else if (rightOpen == false) {
-      digitalWrite(rightTrigger, HIGH);
-      delay(tDelay);
-      digitalWrite(rightTrigger, LOW);
-      rightOpen = true;
-    }
+    digitalWrite(rightTrigger, HIGH);
+    delay(tDelay);
+    digitalWrite(rightTrigger, LOW);
+    // if (rightOpen == true) {
+    //   digitalWrite(rightTrigger, HIGH);
+    //   delay(tDelay);
+    //   digitalWrite(rightTrigger, LOW);
+    //   rightOpen = false;
+    // } else if (rightOpen == false) {
+    //   digitalWrite(rightTrigger, HIGH);
+    //   delay(tDelay);
+    //   digitalWrite(rightTrigger, LOW);
+    //   rightOpen = true;
+    // }
     
 
     return 1;
