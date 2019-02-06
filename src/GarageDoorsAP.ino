@@ -9,10 +9,12 @@ const int tDelay = 500;
 
 //Wash
 const int leftTrigger = A0;
+const int leftCheck = D5;
 bool leftOpen = false;
 
 //Mech
 const int rightTrigger = A1;
+const int rightCheck = D6;
 bool rightOpen = false;
 
 
@@ -27,6 +29,7 @@ void setup() {
   Particle.variable("leftopen", leftOpen);
   Particle.function("tleftdoor", tleftdoor);
   pinMode(leftTrigger, OUTPUT);
+  pinMode(leftCheck, INPUT_PULLUP);
   digitalWrite(leftTrigger, LOW);
   leftOpen = false;
 
@@ -34,6 +37,7 @@ void setup() {
   Particle.variable("rightopen", rightOpen);
   Particle.function("trightdoor", trightdoor);
   pinMode(rightTrigger, OUTPUT);
+  pinMode(rightCheck, INPUT_PULLUP);
   digitalWrite(rightTrigger, LOW);
   rightOpen = false;
 
@@ -42,6 +46,13 @@ void setup() {
 // loop() runs over and over again, as quickly as it can execute.
 void loop() {
   // The core of your code will likely live here.
+  if (digitalRead(leftCheck == HIGH)) {
+    leftOpen = true;
+  }
+
+  if (digitalRead(rightCheck == HIGH)) {
+    rightOpen = true;
+  }
 
 }
 
