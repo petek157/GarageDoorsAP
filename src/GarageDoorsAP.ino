@@ -5,15 +5,21 @@
  * Date:
  */
 
-const int tDelay = 500;
+//const int tDelay = 500;
+
+//Pins
+const int powerPin = D13;
+const int selectorPin = A5;
+const int operatorPin = A4;
+
 
 //Wash
-const int leftTrigger = A0;
+//const int leftTrigger = A0;
 const int leftCheck = D5;
 bool leftOpen = false;
 
 //Mech
-const int rightTrigger = A1;
+//const int rightTrigger = A1;
 const int rightCheck = D6;
 bool rightOpen = false;
 
@@ -28,24 +34,32 @@ void setup() {
   //Wash
   Particle.variable("leftopen", leftOpen);
   Particle.function("tleftdoor", tleftdoor);
-  pinMode(leftTrigger, OUTPUT);
+  //pinMode(leftTrigger, OUTPUT);
   pinMode(leftCheck, INPUT_PULLUP);
-  digitalWrite(leftTrigger, LOW);
+  //digitalWrite(leftTrigger, LOW);
   leftOpen = false;
 
   //Mech
   Particle.variable("rightopen", rightOpen);
   Particle.function("trightdoor", trightdoor);
-  pinMode(rightTrigger, OUTPUT);
+  // pinMode(rightTrigger, OUTPUT);
   pinMode(rightCheck, INPUT_PULLUP);
-  digitalWrite(rightTrigger, LOW);
+  //digitalWrite(rightTrigger, LOW);
   rightOpen = false;
 
+  //Pins
+  pinMode(powerPin, OUTPUT);
+  pinMode(selectorPin, OUTPUT);
+  pinMode(operatorPin, OUTPUT);
+  digitalWrite(powerPin, LOW);
+  digitalWrite(selectorPin, LOW);
+  digitalWrite(operatorPin, LOW);
+
+  //Test Function
+  Particle.function("testRelay", testRelay);
 }
 
-// loop() runs over and over again, as quickly as it can execute.
 void loop() {
-  // The core of your code will likely live here.
   if (digitalRead(leftCheck) == HIGH) {
     leftOpen = true;
   } else {
@@ -61,11 +75,24 @@ void loop() {
 }
 
 int tleftdoor(String command) {
-  if(command == "1") {
+  if(command == "1") {//Open Left Door
     
-    digitalWrite(leftTrigger, HIGH);
-    delay(tDelay);
-    digitalWrite(leftTrigger, LOW);
+    digitalWrite(operatorPin, LOW);
+    delay(150);
+    digitalWrite(selectorPin, LOW);
+    delay(150);
+    digitalWrite(powerPin, HIGH);
+    delay(500);
+    digitalWrite(powerPin, LOW);
+    digitalWrite(selectorPin, LOW);
+    digitalWrite(operatorPin, LOW);
+    
+    
+
+    // digitalWrite(leftTrigger, HIGH);
+    // delay(tDelay);
+    // digitalWrite(leftTrigger, LOW);
+
     // if (leftOpen == true) {
     //   digitalWrite(leftTrigger, HIGH);
     //   delay(tDelay);
@@ -80,15 +107,38 @@ int tleftdoor(String command) {
     
 
     return 1;
+  } else if (command == "0") {//Close Left Door
+
+    digitalWrite(operatorPin, HIGH);
+    delay(150);
+    digitalWrite(selectorPin, LOW);
+    delay(150);
+    digitalWrite(powerPin, HIGH);
+    delay(500);
+    digitalWrite(powerPin, LOW);
+    digitalWrite(selectorPin, LOW);
+    digitalWrite(operatorPin, LOW);
+
+    return 1;
   } else return -1;
 }
 
 int trightdoor(String command) {
-  if(command == "1") {
+  if(command == "1") {//Open Right Door
     
-    digitalWrite(rightTrigger, HIGH);
-    delay(tDelay);
-    digitalWrite(rightTrigger, LOW);
+    digitalWrite(operatorPin, LOW);
+    delay(150);
+    digitalWrite(selectorPin, HIGH);
+    delay(150);
+    digitalWrite(powerPin, HIGH);
+    delay(500);
+    digitalWrite(powerPin, LOW);
+    digitalWrite(selectorPin, LOW);
+    digitalWrite(operatorPin, LOW);
+
+    // digitalWrite(rightTrigger, HIGH);
+    // delay(tDelay);
+    // digitalWrite(rightTrigger, LOW);
     // if (rightOpen == true) {
     //   digitalWrite(rightTrigger, HIGH);
     //   delay(tDelay);
@@ -102,6 +152,35 @@ int trightdoor(String command) {
     // }
     
 
+    return 1;
+  } else if (command == "0") {// Close left door
+
+    digitalWrite(operatorPin, HIGH);
+    delay(150);
+    digitalWrite(selectorPin, HIGH);
+    delay(150);
+    digitalWrite(powerPin, HIGH);
+    delay(500);
+    digitalWrite(powerPin, LOW);
+    digitalWrite(selectorPin, LOW);
+    digitalWrite(operatorPin, LOW);
+    return 1;
+  } else return -1;
+}
+
+int testRelay(String command) {
+
+  if (command == "1") {
+
+    digitalWrite(operatorPin, HIGH);
+    digitalWrite(selectorPin, HIGH);
+    digitalWrite(powerPin, HIGH);
+
+    return 1;
+  } else if (command == "0") {
+    digitalWrite(powerPin, LOW);
+    digitalWrite(selectorPin, LOW);
+    digitalWrite(operatorPin, LOW);
     return 1;
   } else return -1;
 }
