@@ -14,14 +14,14 @@ const int operatorPin = A4;
 
 
 //Wash
-//const int leftTrigger = A0;
-const int leftCheck = D5;
-bool leftOpen = false;
+const int leftCheck = A0;
+int leftPrevStatus = 0;//0 Closed, 1 Open
+int leftStatus = 0;
 
 //Mech
-//const int rightTrigger = A1;
-const int rightCheck = D6;
-bool rightOpen = false;
+const int rightCheck = A2;
+int rightPrevStatus = 0;
+int rightStatus = 0;
 
 
 
@@ -32,20 +32,16 @@ void setup() {
   WiFi.setCredentials("PKShopNet", "abcdef1234");
 
   //Wash
-  Particle.variable("leftopen", leftOpen);
+  Particle.variable("leftopen", leftStatus);
   Particle.function("tleftdoor", tleftdoor);
-  //pinMode(leftTrigger, OUTPUT);
   pinMode(leftCheck, INPUT_PULLUP);
-  //digitalWrite(leftTrigger, LOW);
-  leftOpen = false;
+  leftStatus = 0;
 
   //Mech
-  Particle.variable("rightopen", rightOpen);
+  Particle.variable("rightopen", rightStatus);
   Particle.function("trightdoor", trightdoor);
-  // pinMode(rightTrigger, OUTPUT);
   pinMode(rightCheck, INPUT_PULLUP);
-  //digitalWrite(rightTrigger, LOW);
-  rightOpen = false;
+  rightStatus = 0;
 
   //Pins
   pinMode(powerPin, OUTPUT);
@@ -55,132 +51,101 @@ void setup() {
   digitalWrite(selectorPin, LOW);
   digitalWrite(operatorPin, LOW);
 
-  //Test Function
-  Particle.function("testRelay", testRelay);
 }
 
 void loop() {
-  if (digitalRead(leftCheck) == HIGH) {
-    leftOpen = true;
-  } else {
-    leftOpen = false;
+
+  leftStatus = digitalRead(leftCheck);
+  rightStatus = digitalRead(rightCheck);
+
+  if (leftStatus != leftPrevStatus) {
+    if (leftStatus == 1) {
+      Particle.publish("door", "left,open", PRIVATE);
+    } else {
+      Particle.publish("door", "left,close", PRIVATE);
+    }
+    leftPrevStatus = leftStatus;
   }
 
-  if (digitalRead(rightCheck) == HIGH) {
-    rightOpen = true;
-  } else {
-    rightOpen = false;
+  if (rightStatus != rightPrevStatus) {
+    if (rightStatus == 1) {
+      Particle.publish("door", "right,open", PRIVATE);
+    } else {
+      Particle.publish("door", "right,close", PRIVATE);
+    }
+    rightPrevStatus = rightStatus;
   }
+
+}
+
+int openLeft() {
+  digitalWrite(powerPin, HIGH);
+  delay(1000);
+
+  digitalWrite(powerPin, LOW);
+
+  return 1;
+}
+
+int closeLeft() {
+  digitalWrite(operatorPin, HIGH);
+  delay(150);
+  digitalWrite(powerPin, HIGH);
+  delay(1000);
+
+  digitalWrite(operatorPin, LOW);
+  digitalWrite(powerPin, LOW);
+
+  return 0;
+}
+
+int openRight() {
+  digitalWrite(operatorPin, HIGH);
+  delay(150);
+  digitalWrite(selectorPin, HIGH);
+  delay(150);
+  digitalWrite(powerPin, HIGH);
+  delay(1000);
+
+  digitalWrite(powerPin, LOW);
+  digitalWrite(selectorPin, LOW);
+  digitalWrite(operatorPin, LOW);
+
+  return 1;
+}
+
+int closeRight() {
+  digitalWrite(selectorPin, HIGH);
+  delay(150);
+  digitalWrite(powerPin, HIGH);
+  delay(1000);
+
+  digitalWrite(powerPin, LOW);
+  digitalWrite(selectorPin, LOW);
+
+  return 0;
 
 }
 
 int tleftdoor(String command) {
-  if(command == "1") {//Open Left Door
-    
-    digitalWrite(operatorPin, LOW);
-    delay(150);
-    digitalWrite(selectorPin, LOW);
-    delay(150);
-    digitalWrite(powerPin, HIGH);
-    delay(500);
-    digitalWrite(powerPin, LOW);
-    digitalWrite(selectorPin, LOW);
-    digitalWrite(operatorPin, LOW);
-    
-    
 
-    // digitalWrite(leftTrigger, HIGH);
-    // delay(tDelay);
-    // digitalWrite(leftTrigger, LOW);
+  if (leftStatus == 1) {
+    return closeLeft();
+  } else if (leftStatus == 0) {
+    return openLeft();
+  } else {
+    return -1;
+  }
 
-    // if (leftOpen == true) {
-    //   digitalWrite(leftTrigger, HIGH);
-    //   delay(tDelay);
-    //   digitalWrite(leftTrigger, LOW);
-    //   leftOpen = false;
-    // } else if (leftOpen == false) {
-    //   digitalWrite(leftTrigger, HIGH);
-    //   delay(tDelay);
-    //   digitalWrite(leftTrigger, LOW);
-    //   leftOpen = true;
-    // }
-    
-
-    return 1;
-  } else if (command == "0") {//Close Left Door
-
-    digitalWrite(operatorPin, HIGH);
-    delay(150);
-    digitalWrite(selectorPin, LOW);
-    delay(150);
-    digitalWrite(powerPin, HIGH);
-    delay(500);
-    digitalWrite(powerPin, LOW);
-    digitalWrite(selectorPin, LOW);
-    digitalWrite(operatorPin, LOW);
-
-    return 1;
-  } else return -1;
 }
 
 int trightdoor(String command) {
-  if(command == "1") {//Open Right Door
-    
-    digitalWrite(operatorPin, LOW);
-    delay(150);
-    digitalWrite(selectorPin, HIGH);
-    delay(150);
-    digitalWrite(powerPin, HIGH);
-    delay(500);
-    digitalWrite(powerPin, LOW);
-    digitalWrite(selectorPin, LOW);
-    digitalWrite(operatorPin, LOW);
 
-    // digitalWrite(rightTrigger, HIGH);
-    // delay(tDelay);
-    // digitalWrite(rightTrigger, LOW);
-    // if (rightOpen == true) {
-    //   digitalWrite(rightTrigger, HIGH);
-    //   delay(tDelay);
-    //   digitalWrite(rightTrigger, LOW);
-    //   rightOpen = false;
-    // } else if (rightOpen == false) {
-    //   digitalWrite(rightTrigger, HIGH);
-    //   delay(tDelay);
-    //   digitalWrite(rightTrigger, LOW);
-    //   rightOpen = true;
-    // }
-    
-
-    return 1;
-  } else if (command == "0") {// Close left door
-
-    digitalWrite(operatorPin, HIGH);
-    delay(150);
-    digitalWrite(selectorPin, HIGH);
-    delay(150);
-    digitalWrite(powerPin, HIGH);
-    delay(500);
-    digitalWrite(powerPin, LOW);
-    digitalWrite(selectorPin, LOW);
-    digitalWrite(operatorPin, LOW);
-    return 1;
-  } else return -1;
-}
-
-int testRelay(String command) {
-
-  if (command == "1") {
-
-    digitalWrite(operatorPin, HIGH);
-    digitalWrite(selectorPin, HIGH);
-    digitalWrite(powerPin, HIGH);
-
-    return 1;
-  } else if (command == "0") {
-    digitalWrite(powerPin, LOW);
-    digitalWrite(selectorPin, LOW);
-    digitalWrite(operatorPin, LOW);
-    return 1;
-  } else return -1;
+  if (rightStatus == 1) {
+    return closeRight();
+  } else if (rightStatus == 0) {
+    return openRight();
+  } else {
+    return -1;
+  }
 }
