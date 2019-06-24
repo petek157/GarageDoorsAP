@@ -23,7 +23,7 @@ const int rightCheck = A2;
 int rightPrevStatus = 0;
 int rightStatus = 0;
 
-
+ApplicationWatchdog wd(60000, System.reset);
 
 void setup() {
 
